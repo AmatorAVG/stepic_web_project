@@ -22,7 +22,7 @@ def QuestionView(request, id):
 
 def NewView(request):
     posts = Question.objects.new()
-    limit = request.GET.get('limit', 2)
+    limit = request.GET.get('limit', 10)
     page = request.GET.get('page', 1)
     paginator = Paginator(posts, limit)
     paginator.baseurl = '/?page='
@@ -34,7 +34,7 @@ def NewView(request):
 
 def PopularView(request):
     posts = Question.objects.popular()
-    limit = request.GET.get('limit', 2)
+    limit = request.GET.get('limit', 10)
     page = request.GET.get('page', 1)
     paginator = Paginator(posts, limit)
     paginator.baseurl = '/popular/?page='
