@@ -1,24 +1,49 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.http import HttpResponseRedirect
 from .models import QuestionManager, Question, Answer
 from django.urls import reverse
 from django.views import generic
+from qa.forms import AskForm, AnswerForm
 
 from django.core.paginator import Paginator
+
+def question_add(request):
+
+    if request.method == "POST":
+        form = AskForm(request.user, request.POST)
+
+        if form.is_valid():
+            form_title = form.data['title']
+            form_text = form.data['text']
+            saving_all = Question.objects.create(title=form_title, text=form_text, author_id=1)
+            url = saving_all.get_url()
+            return HttpResponseRedirect(url)
+    else:
+        form = AskForm(request.user)
+    return render(request, 'qa/question_add.html', {'form': form, 'question_id': 1})
+
 
 def QuestionView(request, id):
     question = get_object_or_404(Question, pk=id)
     answer_set = question.answer_set
-    return render(request, 'qa/detail.html', {
+    if request.method == "POST":
+
+        form = AnswerForm(request.user, request.POST)
+        form_text = form.data['text']
+        saving_all = Answer.objects.create(question=question, text=form_text, author_id=1)
+
+        return render(request, 'qa/detail.html', {
         'question': question,
-        'answer_set': answer_set,
-    })
-
-
+        'answer_set': answer_set, 'form': form
+        })
+    else:
+        form = AnswerForm(request.user)
+    return render(request, 'qa/detail.html', {'question': question,
+        'answer_set': answer_set, 'form': form, 'question_id': 1})
 
 def NewView(request):
     posts = Question.objects.new()

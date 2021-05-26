@@ -1,0 +1,26 @@
+<!--{{ form.as_ul }}
+
+{% for e in form.non_field_errors %}
+    <div class="alert alert-danger">{{ e }}</div>
+{% endfor %}
+<form class="form-horizontal" method="post" action="/question/{{question_id}}/">
+    {% csrf_token %}
+    <fieldset>
+        {% for field in form %}
+            <div class="control-group {% if field.errors %}has-error{% endif %}">
+                <label class="control-label">{{ field.label }}</label>
+                <div class="controls">{{ field }}</div>
+            </div>
+        {% endfor %}
+    </fieldset>
+    <div class="form-actions">
+        <button type="submit" class="btn-primary">SAVE</button>
+    </div>
+</form>-->
+{% block content %}
+    <h1>New post</h1>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+{% endblock %}
