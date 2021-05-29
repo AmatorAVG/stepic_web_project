@@ -14,7 +14,8 @@ from django.core.paginator import Paginator
 def question_add(request):
 
     if request.method == "POST":
-        form = AskForm(request.user, request.POST)
+        # form = AskForm(request.user, request.POST)
+        form = AskForm(request.POST)
 
         if form.is_valid():
             form_title = form.data['title']
@@ -23,7 +24,7 @@ def question_add(request):
             url = saving_all.get_url()
             return HttpResponseRedirect(url)
     else:
-        form = AskForm(request.user)
+        form = AskForm()
     return render(request, 'qa/question_add.html', {'form': form, 'question_id': 1})
 
 
@@ -32,7 +33,7 @@ def QuestionView(request, id):
     answer_set = question.answer_set
     if request.method == "POST":
 
-        form = AnswerForm(request.user, request.POST)
+        form = AnswerForm(request.POST)
         form_text = form.data['text']
         saving_all = Answer.objects.create(question=question, text=form_text, author_id=1)
 
@@ -41,7 +42,7 @@ def QuestionView(request, id):
         'answer_set': answer_set, 'form': form
         })
     else:
-        form = AnswerForm(request.user)
+        form = AnswerForm()
     return render(request, 'qa/detail.html', {'question': question,
         'answer_set': answer_set, 'form': form, 'question_id': 1})
 

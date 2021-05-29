@@ -7,12 +7,8 @@ class AnswerForm(forms.Form):
     question = forms.ModelChoiceField(queryset=Question.objects.all(), widget=forms.HiddenInput())
     def clean(self):
        pass
-        # if is_spam(self.clean_data):
-        # raise forms.ValidationError(
-        # u'Сообщение похоже на спам',
-        # code='spam'
-    def __init__(self, user, *args, **kwargs):
-        self._user = user
+    def __init__(self, *args, **kwargs):
+        # self._user = user
         super(AnswerForm, self).__init__(*args, **kwargs)
 
 
@@ -20,8 +16,8 @@ class AskForm(forms.Form):
     title = forms.CharField(max_length=100)
     text = forms.CharField(widget=forms.Textarea)
 
-    def __init__(self, user, *args, **kwargs):
-        self._user = user
+    def __init__(self, *args, **kwargs):
+        # self._user = user
         super(AskForm, self).__init__(*args, **kwargs)
 
     def clean(self):
