@@ -3,3 +3,4 @@ mysql -uroot -e "create database stepic_web;" && mysql -uroot -e "grant all priv
 sudo apt-get -y install lynx
 python3 manage.py makemigrations qa
 python3 manage.py migrate
+python3 manage.py createsuperuser
