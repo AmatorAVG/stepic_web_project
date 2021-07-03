@@ -7,9 +7,49 @@ from django.http import HttpResponseRedirect
 from .models import QuestionManager, Question, Answer
 from django.urls import reverse
 from django.views import generic
-from qa.forms import AskForm, AnswerForm
+from qa.forms import AskForm, AnswerForm, SignupForm, LoginForm
+from django.contrib.auth import authenticate, login
 
 from django.core.paginator import Paginator
+
+def LoginView(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            print(username, password)
+            user = authenticate(username=username, password=password)
+            print(type(user))
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+            return HttpResponseRedirect('/')
+    else:
+        form = LoginForm()
+    return render(request, 'qa/login.html', {'form': form,
+                                          'user': request.user,
+                                          'session': request.session, })
+
+def SignupView(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data["username"]
+            password = form.raw_password
+            user = authenticate(username=username, password=password)
+            # print(type(user))
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+            return HttpResponseRedirect('/')
+    else:
+        form = SignupForm()
+    return render(request, 'qa/signup.html', {'form': form,
+                                           'user': request.user,
+                                           'session': request.session, })
+
 
 def question_add(request):
 
@@ -27,7 +67,9 @@ def question_add(request):
             return HttpResponseRedirect(url)
     else:
         form = AskForm()
-    return render(request, 'qa/question_add.html', {'form': form, 'question_id': 1})
+    return render(request, 'qa/question_add.html', {'form': form, 'question_id': 1,
+                                                    'user': request.user,
+                                                    'session': request.session, })
 
 
 def QuestionView(request, id):
@@ -52,7 +94,10 @@ def QuestionView(request, id):
     else:
         form = AnswerForm(initial={'question': question.id})
     return render(request, 'qa/detail.html', {'question': question,
-        'answer_set': answer_set, 'form': form, 'question_id': question.id})
+        'answer_set': answer_set, 'form': form, 'question_id': question.id,
+                                              'user': request.user,
+                                              'session': request.session,})
+
 
 def NewView(request):
     posts = Question.objects.new()
@@ -64,6 +109,8 @@ def NewView(request):
     return render(request, 'qa/new.html', {
         'posts': page.object_list,
         'paginator': paginator, 'page': page,
+        'user': request.user,
+        'session': request.session,
     })
 
 def PopularView(request):
@@ -76,6 +123,8 @@ def PopularView(request):
     return render(request, 'qa/popular.html', {
         'posts': page.object_list,
         'paginator': paginator, 'page': page,
+        'user': request.user,
+        'session': request.session,
     })
 
 
